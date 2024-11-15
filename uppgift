@@ -1,0 +1,59 @@
+import argparse
+from cryptography.fernet import Fernet
+
+def generate_key():
+    key = Fernet.generate_key()
+    with open("secret.key", "wb") as f:
+        f.write(key)
+    print("Generated and saved new key to 'secret.key'.")
+
+def encrypt_file(input_file, output_file):
+    with open("secret.key", "rb") as f:
+        key = f.read()
+    cipher = Fernet(key)
+    with open(input_file, "rb") as f:
+        plaintext = f.read()
+    ciphertext = cipher.encrypt(plaintext)
+    with open(output_file, "wb") as f:
+        f.write(ciphertext)
+    print(f"Encrypted '{input_file}' and saved as '{output_file}'.")
+
+def decrypt_file(input_file, output_file):
+    with open("secret.key", "rb") as f:
+        key = f.read()
+    cipher = Fernet(key)
+    with open(input_file, "rb") as f:
+        ciphertext = f.read()
+    plaintext = cipher.decrypt(ciphertext)
+    with open(output_file, "wb") as f:
+        f.write(plaintext)
+    print(f"Decrypted '{input_file}' and saved as '{output_file}'.")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Encrypt and decrypt files with Fernet.")
+    parser.add_argument("command", choices=["generate", "encrypt", "decrypt", "exit"])
+    parser.add_argument("input_file", nargs="?")
+    parser.add_argument("output_file", nargs="?")
+    args = parser.parse_args()
+
+    if args.command == "generate":
+        generate_key()
+    elif args.command == "encrypt":
+        encrypt_file(args.input_file, args.output_file)
+    elif args.command == "decrypt":
+        decrypt_file(args.input_file, args.output_file)
+    elif args.command == "exit":
+        print("Exiting")
+        exit()
+
+
+
+
+
+
+
+
+
+
+
+
